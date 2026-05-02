@@ -70,7 +70,7 @@ class _PageListState extends State<PageList> {
             child: TextField(
               controller: _controller,
               decoration: const InputDecoration(
-                hintText: "Cari masakan...",
+                hintText: "Cari ...",
               ),
               onChanged: (value) {
                 _searchMeals(value);

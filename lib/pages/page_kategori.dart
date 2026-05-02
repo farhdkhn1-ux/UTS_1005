@@ -54,7 +54,7 @@ class _PageKategoriState extends State<PageKategori> {
             child: TextField(
               controller: _controller,
               decoration: const InputDecoration(
-                hintText: "Cari kategori...",
+                hintText: "Cari ...",
 
               ),
               onChanged: _filterCategories,
