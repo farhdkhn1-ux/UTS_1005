@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:uts_1005/services/api_service.dart';
+import '../services/api_service.dart';
+import '../models/daftar_kategori.dart';
 import 'page_detail.dart';
 
 class PageList extends StatefulWidget {
@@ -11,11 +12,7 @@ class PageList extends StatefulWidget {
 }
 
 class _PageListState extends State<PageList> {
-  late Future<List<Map<String, dynamic>>> futureMeals;
-  List<Map<String, dynamic>> _results = [];
-  final TextEditingController _controller = TextEditingController();
-  bool _loading = false;
-  String _error = "";
+  late Future<DaftarCategory> futureMeals;
 
   @override
   void initState() {
@@ -23,118 +20,71 @@ class _PageListState extends State<PageList> {
     futureMeals = ApiService().fetchMealsByCategory(widget.category);
   }
 
-  void _searchMeals(String keyword) async {
-    if (keyword.isEmpty) {
-      setState(() {
-        _results = [];
-        _error = "";
-      });
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _error = "";
-    });
-
-    try {
-      final data = await ApiService().searchMeals(keyword);
-      setState(() {
-        _results = data;
-        if (_results.isEmpty) {
-          _error = "Maaf, masakan tidak ditemukan.";
-        }
-      });
-    } catch (e) {
-      setState(() {
-        _error = "Terjadi error: $e";
-      });
-    } finally {
-      setState(() {
-        _loading = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Masakan: ${widget.category}")),
-      backgroundColor: Colors.grey,
-      body: Column(
-        children: [
-
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-
-            child: TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: "Cari ...",
+      appBar: AppBar(title: Text("Meals - ${widget.category}")),
+      body: FutureBuilder<DaftarCategory>(
+        future: futureMeals,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData || snapshot.data!.meals.isEmpty) {
+            return const Center(child: Text("Tidak ada meal ditemukan"));
+          } else {
+            final meals = snapshot.data!.meals;
+            return GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // jumlah kolom
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 3 / 4, // rasio card
               ),
-              onChanged: (value) {
-                _searchMeals(value);
-              },
-            ),
-          ),
-          if (_loading) const CircularProgressIndicator(),
-          if (_error.isNotEmpty) Text(_error),
-          Expanded(
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: futureMeals,
-              builder: (context, snapshot) {
-                final meals = _results.isNotEmpty
-                    ? _results
-                    : snapshot.data ?? [];
-
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    _results.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
-                } else if (meals.isEmpty) {
-                  return const Center(child: Text("Tidak ada masakan ditemukan"));
-                } else {
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(8),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: meals.length,
-                    itemBuilder: (context, index) {
-                      final meal = meals[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PageDetail(meal: meal),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Image.network(meal["strMealThumb"], fit: BoxFit.cover),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(meal["strMeal"], textAlign: TextAlign.center),
-                              ),
-                            ],
+              itemCount: meals.length,
+              itemBuilder: (context, index) {
+                final meal = meals[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PageDetail(idMeal: meal.idMeal),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            meal.strMealThumb,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
                           ),
                         ),
-                      );
-                    },
-                  );
-                }
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            meal.strMeal,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }

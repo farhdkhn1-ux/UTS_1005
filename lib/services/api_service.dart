@@ -1,41 +1,26 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:uts_1005/models/model_kategori.dart';
+import '../models/daftar_kategori.dart';
 
 class ApiService {
   static const String baseUrl = "https://www.themealdb.com/api/json/v1/1";
 
-  Future<List<Category>> fetchCategories() async {
-    final response = await http.get(Uri.parse("$baseUrl/categories.php"));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return List<Category>.from(
-        data["categories"].map((x) => Category.fromJson(x)),
-      );
-    } else {
-      throw Exception("Gagal mengambil kategori");
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> fetchMealsByCategory(String category) async {
+  Future<DaftarCategory> fetchMealsByCategory(String category) async {
     final response = await http.get(Uri.parse("$baseUrl/filter.php?c=$category"));
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return List<Map<String, dynamic>>.from(data["meals"]);
+      return daftarCategoryFromJson(response.body);
     } else {
-      throw Exception("Gagal mengambil masakan");
+      throw Exception("Failed to load meals");
     }
   }
 
-  Future<List<Map<String, dynamic>>> searchMeals(String keyword) async {
-    final response = await http.get(Uri.parse("$baseUrl/search.php?s=$keyword"));
+  Future<Map<String, dynamic>> fetchMealDetailRaw(String idMeal) async {
+    final response = await http.get(Uri.parse("$baseUrl/lookup.php?i=$idMeal"));
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data["meals"] != null
-          ? List<Map<String, dynamic>>.from(data["meals"])
-          : [];
+      final data = json.decode(response.body);
+      return data["meals"][0];
     } else {
-      throw Exception("Gagal mencari masakan");
+      throw Exception("Failed to load meal detail");
     }
   }
 }

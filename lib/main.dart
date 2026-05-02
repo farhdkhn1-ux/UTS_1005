@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uts_1005/pages/page_kategori.dart';
+import 'package:uts_1005/pages/page_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
       debugShowCheckedModeBanner: false,
-      home: const PageKategori(),
+      home: const PageList(category: "Beef"),
     );
   }
 }
