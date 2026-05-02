@@ -6,7 +6,7 @@ class PageDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy detail manual
+
     final ingredients = [
       {"ingredient": "Ikan", "measure": "200 gram"},
       {"ingredient": "Bawang Putih", "measure": "2 siung"},
