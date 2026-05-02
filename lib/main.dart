@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uts_1005/pages/page_kategori.dart';
+
 import 'package:uts_1005/pages/page_list.dart';
 
 void main() {

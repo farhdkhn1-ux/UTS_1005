@@ -45,7 +45,7 @@ class _PageListState extends State<PageList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Meals - ${widget.category}")),
+      appBar: AppBar(title: Text("${widget.category}")),
       body: Column(
         children: [
           Padding(
