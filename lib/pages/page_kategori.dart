@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
-import '../models/model_kategori.dart';
+import 'package:uts_1005/services/api_service.dart';
+import 'package:uts_1005/models/model_kategori.dart';
 import 'page_list.dart';
 
 class PageKategori extends StatefulWidget {
@@ -45,6 +45,7 @@ class _PageKategoriState extends State<PageKategori> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Kategori Masakan")),
+      backgroundColor: Colors.grey,
       body: Column(
         children: [
 
@@ -54,6 +55,7 @@ class _PageKategoriState extends State<PageKategori> {
               controller: _controller,
               decoration: const InputDecoration(
                 hintText: "Cari kategori...",
+
               ),
               onChanged: _filterCategories,
             ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import 'package:uts_1005/services/api_service.dart';
 import 'page_detail.dart';
 
 class PageList extends StatefulWidget {
@@ -60,11 +60,13 @@ class _PageListState extends State<PageList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Masakan: ${widget.category}")),
+      backgroundColor: Colors.grey,
       body: Column(
         children: [
 
           Padding(
             padding: const EdgeInsets.all(8.0),
+
             child: TextField(
               controller: _controller,
               decoration: const InputDecoration(
